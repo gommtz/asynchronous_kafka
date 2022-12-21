@@ -33,10 +33,14 @@ def _env_int(key: str, default: int) -> int:
 
 class Settings:
     def __init__(self):
-        self.PORT = _env_int("ORIENTDB_PORT", 2424)
-        self.KAFKA_BOOTSTRAP_SERVERS = _env_str('KAFKA_BOOTSTRAP_SERVERS', 'localhost:29092')
-        self.KAFKA_CONSUMER_GROUP_PREFIX = _env_str('KAFKA_CONSUMER_GROUP_PREFIX', 'group')
-        self.KAFKA_TOPIC = _env_str('KAFKA_TOPIC')
+        self.PORT = _env_int("PORT", 8000)
+        self.KAFKA_BOOTSTRAP_SERVERS = _env_str(
+            "KAFKA_BOOTSTRAP_SERVERS", "localhost:29092"
+        )
+        self.KAFKA_CONSUMER_GROUP_PREFIX = _env_str(
+            "KAFKA_CONSUMER_GROUP_PREFIX", "group"
+        )
+        self.KAFKA_TOPIC = _env_str("KAFKA_TOPIC")
 
 
 # Global variable to import settings
