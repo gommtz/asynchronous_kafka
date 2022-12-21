@@ -13,6 +13,7 @@ from aiokafka import AIOKafkaConsumer, AIOKafkaProducer
 
 
 from config import settings
+from logger import logger
 from src.common.types import ProducerMessage, ProducerResponse
 
 
@@ -27,23 +28,16 @@ consumer = None
 aioproducer = None
 
 
-# initialize logger
-logging.basicConfig(
-    format="%(asctime)s - %(levelname)s - %(message)s", level=logging.INFO
-)
-log = logging.getLogger(__name__)
-
-
 @app.on_event("startup")
 async def startup_event():
-    log.info("Initializing API ...")
+    logger.info("Initializing API ...")
     await initialize()
     await consume()
 
 
 @app.on_event("shutdown")
 async def shutdown_event():
-    log.info("Shutting down API")
+    logger.info("Shutting down API")
     consumer_task.cancel()
     await aioproducer.stop()
     await consumer.stop()
@@ -69,7 +63,7 @@ async def initialize():
     global aioproducer
     group_id = f"{settings.KAFKA_CONSUMER_GROUP_PREFIX}-{randint(0, 10000)}"
 
-    log.debug(
+    logger.debug(
         f"Initializing KafkaConsumer for topic {settings.KAFKA_TOPIC}, group_id {group_id}"
         f" and using bootstrap servers {settings.KAFKA_BOOTSTRAP_SERVERS}"
     )
@@ -84,7 +78,7 @@ async def initialize():
     # get cluster layout and join group KAFKA_CONSUMER_GROUP
     await consumer.start()
 
-    log.debug(
+    logger.debug(
         f"Initializing KafkaProducer using bootstrap servers {settings.KAFKA_BOOTSTRAP_SERVERS}"
     )
 
@@ -105,11 +99,11 @@ async def send_consumer_message(consumer):
         # consume messages
         async for msg in consumer:
             # x = json.loads(msg.value)
-            log.info(f"Consumed msg: {msg}")
+            logger.info(f"Consumed msg: {msg}")
 
     finally:
         # will leave consumer group; perform autocommit if enabled
-        log.warning("Stopping consumer")
+        logger.warning("Stopping consumer")
         await consumer.stop()
 
 
